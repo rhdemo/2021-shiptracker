@@ -1,0 +1,137 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2021-02-04 - 15:17:14 +0000
+    app.openshift.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+    app.quarkus.io/commit-id: 6ede90dbe4799c10ed7036053485e27d756e7006
+    app.quarkus.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+  labels:
+    app.kubernetes.io/name: ship-commander
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.openshift.io/runtime: quarkus
+  name: ship-commander
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: ship-commander
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  type: ClusterIP
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: openjdk-11
+spec:
+  dockerImageRepository: registry.access.redhat.com/ubi8/openjdk-11
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2021-02-04 - 15:17:14 +0000
+    app.openshift.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+    app.quarkus.io/commit-id: 6ede90dbe4799c10ed7036053485e27d756e7006
+    app.quarkus.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+  labels:
+    app.openshift.io/runtime: quarkus
+    app.kubernetes.io/name: ship-commander
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  name: ship-commander
+spec: {}
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2021-02-04 - 15:17:14 +0000
+    app.openshift.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+    app.quarkus.io/commit-id: 6ede90dbe4799c10ed7036053485e27d756e7006
+    app.quarkus.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+  labels:
+    app.openshift.io/runtime: quarkus
+    app.kubernetes.io/name: ship-commander
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  name: ship-commander
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: ship-commander:1.0.0-SNAPSHOT
+  source:
+    binary: {}
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: openjdk-11:latest
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2021-02-04 - 15:17:14 +0000
+    app.openshift.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+    app.quarkus.io/commit-id: 6ede90dbe4799c10ed7036053485e27d756e7006
+    app.quarkus.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+  labels:
+    app.openshift.io/runtime: quarkus
+    app.kubernetes.io/name: ship-commander
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  name: ship-commander
+spec:
+  replicas: 1
+  selector:
+    app.kubernetes.io/name: ship-commander
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  template:
+    metadata:
+      annotations:
+        app.quarkus.io/build-timestamp: 2021-02-04 - 15:17:14 +0000
+        app.openshift.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+        app.quarkus.io/commit-id: 6ede90dbe4799c10ed7036053485e27d756e7006
+        app.quarkus.io/vcs-url: https://github.com/rhdemo/2021-shipcommander.git
+      labels:
+        app.openshift.io/runtime: quarkus
+        app.kubernetes.io/name: ship-commander
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    spec:
+      containers:
+      - args:
+        - -jar
+        - /deployments/ship-commander-1.0.0-SNAPSHOT-runner.jar
+        - -cp
+        - /deployments/lib/io.quarkus.quarkus-security-runtime-spi-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-vertx-http-dev-console-runtime-spi-1.11.1.Final.jar:/deployments/lib/org.reactivestreams.reactive-streams-1.0.3.jar:/deployments/lib/io.smallrye.reactive.mutiny-0.12.5.jar:/deployments/lib/io.quarkus.security.quarkus-security-1.1.3.Final.jar:/deployments/lib/io.netty.netty-codec-4.1.49.Final.jar:/deployments/lib/io.netty.netty-handler-4.1.49.Final.jar:/deployments/lib/io.quarkus.quarkus-netty-1.11.1.Final.jar:/deployments/lib/io.netty.netty-common-4.1.49.Final.jar:/deployments/lib/io.netty.netty-buffer-4.1.49.Final.jar:/deployments/lib/io.netty.netty-transport-4.1.49.Final.jar:/deployments/lib/io.netty.netty-codec-socks-4.1.49.Final.jar:/deployments/lib/io.netty.netty-handler-proxy-4.1.49.Final.jar:/deployments/lib/io.netty.netty-codec-http-4.1.49.Final.jar:/deployments/lib/io.netty.netty-codec-http2-4.1.49.Final.jar:/deployments/lib/io.netty.netty-resolver-4.1.49.Final.jar:/deployments/lib/io.netty.netty-codec-dns-4.1.49.Final.jar:/deployments/lib/io.netty.netty-resolver-dns-4.1.49.Final.jar:/deployments/lib/io.vertx.vertx-core-3.9.5.jar:/deployments/lib/io.quarkus.quarkus-vertx-core-1.11.1.Final.jar:/deployments/lib/io.vertx.vertx-web-common-3.9.5.jar:/deployments/lib/io.vertx.vertx-auth-common-3.9.5.jar:/deployments/lib/io.vertx.vertx-bridge-common-3.9.5.jar:/deployments/lib/io.vertx.vertx-web-3.9.5.jar:/deployments/lib/io.quarkus.quarkus-vertx-http-1.11.1.Final.jar:/deployments/lib/org.jboss.spec.javax.ws.rs.jboss-jaxrs-api_2.1_spec-2.0.1.Final.jar:/deployments/lib/org.jboss.resteasy.resteasy-core-spi-4.5.8.SP1.jar:/deployments/lib/com.ibm.async.asyncutil-0.1.0.jar:/deployments/lib/org.jboss.resteasy.resteasy-core-4.5.8.SP1.jar:/deployments/lib/com.sun.activation.jakarta.activation-1.2.1.jar:/deployments/lib/io.quarkus.quarkus-resteasy-common-1.11.1.Final.jar:/deployments/lib/jakarta.validation.jakarta.validation-api-2.0.2.jar:/deployments/lib/io.quarkus.quarkus-resteasy-server-common-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-resteasy-1.11.1.Final.jar:/deployments/lib/jakarta.el.jakarta.el-api-3.0.3.jar:/deployments/lib/jakarta.interceptor.jakarta.interceptor-api-1.2.5.jar:/deployments/lib/jakarta.enterprise.jakarta.enterprise.cdi-api-2.0.2.jar:/deployments/lib/jakarta.annotation.jakarta.annotation-api-1.3.5.jar:/deployments/lib/jakarta.transaction.jakarta.transaction-api-1.3.3.jar:/deployments/lib/org.jboss.logging.jboss-logging-3.4.1.Final.jar:/deployments/lib/io.quarkus.arc.arc-1.11.1.Final.jar:/deployments/lib/jakarta.inject.jakarta.inject-api-1.0.jar:/deployments/lib/io.quarkus.quarkus-development-mode-spi-1.11.1.Final.jar:/deployments/lib/io.smallrye.common.smallrye-common-annotation-1.5.0.jar:/deployments/lib/io.smallrye.config.smallrye-config-common-1.10.1.jar:/deployments/lib/io.smallrye.common.smallrye-common-function-1.5.0.jar:/deployments/lib/io.smallrye.common.smallrye-common-expression-1.5.0.jar:/deployments/lib/io.smallrye.common.smallrye-common-constraint-1.5.0.jar:/deployments/lib/io.smallrye.common.smallrye-common-classloader-1.5.0.jar:/deployments/lib/io.smallrye.config.smallrye-config-1.10.1.jar:/deployments/lib/org.jboss.logmanager.jboss-logmanager-embedded-1.0.6.jar:/deployments/lib/org.jboss.logging.jboss-logging-annotations-2.2.0.Final.jar:/deployments/lib/org.jboss.threads.jboss-threads-3.2.0.Final.jar:/deployments/lib/org.slf4j.slf4j-api-1.7.30.jar:/deployments/lib/org.jboss.slf4j.slf4j-jboss-logmanager-1.1.0.Final.jar:/deployments/lib/org.graalvm.sdk.graal-sdk-20.3.1.jar:/deployments/lib/org.wildfly.common.wildfly-common-1.5.4.Final-format-001.jar:/deployments/lib/io.smallrye.common.smallrye-common-io-1.5.0.jar:/deployments/lib/io.quarkus.quarkus-bootstrap-runner-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-core-1.11.1.Final.jar:/deployments/lib/org.eclipse.microprofile.context-propagation.microprofile-context-propagation-api-1.0.1.jar:/deployments/lib/io.quarkus.quarkus-arc-1.11.1.Final.jar:/deployments/lib/org.eclipse.yasson-1.0.8.jar:/deployments/lib/io.quarkus.quarkus-jsonp-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-jsonb-1.11.1.Final.jar:/deployments/lib/org.glassfish.jakarta.json-1.1.6.jar:/deployments/lib/jakarta.json.bind.jakarta.json.bind-api-1.0.2.jar:/deployments/lib/org.jboss.resteasy.resteasy-json-binding-provider-4.5.8.SP1.jar:/deployments/lib/org.jboss.resteasy.resteasy-json-p-provider-4.5.8.SP1.jar:/deployments/lib/commons-io.commons-io-2.8.0.jar:/deployments/lib/io.quarkus.quarkus-resteasy-jsonb-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-datasource-common-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-datasource-1.11.1.Final.jar:/deployments/lib/org.jboss.jboss-transaction-spi-7.6.0.Final.jar:/deployments/lib/org.jboss.spec.javax.resource.jboss-connector-api_1.7_spec-1.0.0.Final.jar:/deployments/lib/org.jboss.narayana.jta.narayana-jta-5.10.6.Final.jar:/deployments/lib/org.jboss.narayana.jts.narayana-jts-integration-5.10.6.Final.jar:/deployments/lib/io.agroal.agroal-api-1.9.jar:/deployments/lib/io.agroal.agroal-narayana-1.9.jar:/deployments/lib/io.agroal.agroal-pool-1.9.jar:/deployments/lib/io.quarkus.quarkus-credentials-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-agroal-1.11.1.Final.jar:/deployments/lib/io.smallrye.smallrye-context-propagation-api-1.0.19.jar:/deployments/lib/io.smallrye.smallrye-context-propagation-1.0.19.jar:/deployments/lib/io.quarkus.quarkus-smallrye-context-propagation-1.11.1.Final.jar:/deployments/lib/io.smallrye.reactive.mutiny-context-propagation-0.12.5.jar:/deployments/lib/io.quarkus.quarkus-mutiny-1.11.1.Final.jar:/deployments/lib/io.smallrye.smallrye-context-propagation-jta-1.0.19.jar:/deployments/lib/io.smallrye.reactive.smallrye-reactive-converter-api-1.3.0.jar:/deployments/lib/io.smallrye.reactive.smallrye-reactive-converter-mutiny-1.3.0.jar:/deployments/lib/io.quarkus.quarkus-narayana-jta-1.11.1.Final.jar:/deployments/lib/net.bytebuddy.byte-buddy-1.10.17.jar:/deployments/lib/antlr.antlr-2.7.7.jar:/deployments/lib/com.fasterxml.classmate-1.3.4.jar:/deployments/lib/org.dom4j.dom4j-2.1.3.jar:/deployments/lib/org.hibernate.common.hibernate-commons-annotations-5.1.2.Final.jar:/deployments/lib/org.hibernate.hibernate-core-5.4.27.Final.jar:/deployments/lib/org.hibernate.hibernate-graalvm-5.4.27.Final.jar:/deployments/lib/org.glassfish.jaxb.txw2-2.3.3-b02.jar:/deployments/lib/com.sun.istack.istack-commons-runtime-3.0.10.jar:/deployments/lib/org.glassfish.jaxb.jaxb-runtime-2.3.3-b02.jar:/deployments/lib/org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec-2.0.0.Final.jar:/deployments/lib/jakarta.persistence.jakarta.persistence-api-2.2.3.jar:/deployments/lib/com.google.errorprone.error_prone_annotations-2.2.0.jar:/deployments/lib/com.github.ben-manes.caffeine.caffeine-2.8.8.jar:/deployments/lib/org.hibernate.quarkus-local-cache-0.1.0.jar:/deployments/lib/io.quarkus.quarkus-caffeine-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-hibernate-orm-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-panache-hibernate-common-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-hibernate-orm-panache-common-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-panache-common-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-hibernate-orm-panache-1.11.1.Final.jar:/deployments/lib/org.postgresql.postgresql-42.2.18.jar:/deployments/lib/io.quarkus.quarkus-jdbc-postgresql-1.11.1.Final.jar:/deployments/lib/com.h2database.h2-1.4.197.jar:/deployments/lib/org.locationtech.jts.jts-core-1.15.0.jar:/deployments/lib/io.quarkus.quarkus-jdbc-h2-1.11.1.Final.jar:/deployments/lib/org.eclipse.microprofile.openapi.microprofile-openapi-api-1.1.2.jar:/deployments/lib/org.eclipse.microprofile.config.microprofile-config-api-1.4.jar:/deployments/lib/com.fasterxml.jackson.core.jackson-core-2.11.3.jar:/deployments/lib/com.fasterxml.jackson.core.jackson-annotations-2.11.3.jar:/deployments/lib/com.fasterxml.jackson.core.jackson-databind-2.11.3.jar:/deployments/lib/org.yaml.snakeyaml-1.27.jar:/deployments/lib/com.fasterxml.jackson.dataformat.jackson-dataformat-yaml-2.11.3.jar:/deployments/lib/org.jboss.jandex-2.2.2.Final.jar:/deployments/lib/io.smallrye.smallrye-open-api-core-2.0.19.jar:/deployments/lib/io.quarkus.quarkus-swagger-ui-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-smallrye-openapi-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-kubernetes-client-internal-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-openshift-1.11.1.Final.jar:/deployments/lib/io.quarkus.quarkus-kubernetes-1.11.1.Final.jar
+        - -Dquarkus.http.host=0.0.0.0
+        - -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+        command:
+        - java
+        env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: JAVA_APP_JAR
+          value: /deployments/ship-commander-1.0.0-SNAPSHOT-runner.jar
+        - name: JAVA_LIB_DIR
+          value: /deployments/lib
+        image: sblanc/ship-commander:1.0.0-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        name: ship-commander
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - ship-commander
+      from:
+        kind: ImageStreamTag
+        name: ship-commander:1.0.0-SNAPSHOT
+    type: ImageChange
