@@ -18,7 +18,7 @@ public class ReadingDTO {
     }
     
     public String getShippingId() {
-        return shippingId + " | " + getTemperature() + " Celsius";
+        return shippingId + " | " + getTemperature() + " Farenheit";
     }
 
     public Double getTemperature() {
