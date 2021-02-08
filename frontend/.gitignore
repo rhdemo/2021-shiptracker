@@ -1,0 +1,7 @@
+# testing
+/coverage
+
+# production
+/public
+
+.env.local

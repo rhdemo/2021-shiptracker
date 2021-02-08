@@ -1,0 +1,129 @@
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background-color: lightblue;
+}
+
+.csd-shipping {
+  background: #99ffff;
+  height: 100Vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__map-control {
+    width: 0;
+    height: 0;
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__atmosphere {
+    height: 35vw;
+    width: 50vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  &__atmospheric-object {
+    position: absolute;
+    width: 10vw;
+    z-index: 1000;
+  }
+
+  &__cloud-1 {
+    top: 5vh;
+    left: 3vw;
+  }
+
+  &__cloud-2 {
+    bottom: 0;
+    right: 0;
+  }
+
+  &__sun {
+    right: 3vh;
+    top: 3vh;
+  }
+
+  &__earth {
+    background-color: #00ccff;
+    clip-path: url('#clipPath');
+    position: relative;
+    width: 45vw;
+    height: 45vw;
+
+    &:before {
+      border-radius: 50%;
+      box-shadow: inset 60px 0 rgb(0, 51, 102 / 60%), inset 0 0 0 0 rgb(0, 51, 102 / 60%);
+      content: "";
+      display: block;
+      height: 45vw;
+      opacity: 40%;
+      pointer-events: none;
+      position: relative;
+      width: 45vw;
+      z-index: 1000;
+    }
+
+    * {
+      border: none !important;
+      outline: 0 !important;
+    }
+
+    .gm-style {
+      div {
+        cursor: default;
+      }
+    }
+  }
+
+  &__earth-shadow {
+    position: absolute;
+    background-color: transparent;
+    width: 45vw;
+    height: 45vw;
+    border-radius: 50%;
+    box-shadow: inset 60px 0px rgba(0, 51, 102, 0.4), inset 0px 0px 0px 0px rgba(0, 51, 102, 0.4);
+  }
+
+  .gm-style-iw.gm-style-iw-c {
+    padding: 0 !important;
+
+    .gm-style-iw-d {
+      padding: 0;
+      overflow: hidden !important;
+    }
+
+    .gm-ui-hover-effect {
+    }
+  }
+
+  &__port-marker {
+    padding: 8px;
+    font-size: 12px;
+
+    &__header {
+      &__name {
+        font-weight: bold;
+      }
+    }
+
+    &__body {
+    }
+
+    &__row {
+      &__category {
+        margin-right: 4px;
+      }
+
+      &__value {
+      }
+    }
+  }
+}
