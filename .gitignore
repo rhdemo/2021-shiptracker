@@ -37,3 +37,13 @@ nb-configuration.xml
 
 # Local environment
 .env
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+
+node_modules
+
+# UI Output Dir
+src/main/resources/META-INF/resources

@@ -26,7 +26,7 @@ public class ShipmentResource {
     public List<Shipment> allShipments() {
         return Shipment.listAll();
     }
-    
+
     @GET
     @Path("/initdata")
     @Transactional
@@ -39,7 +39,7 @@ public class ShipmentResource {
 
         Port halifax = new Port();
         halifax.latitude=44.65;
-        halifax.longitude=63.567;
+        halifax.longitude=-63.567;
         halifax.name="Halifax";
         halifax.persist();
 
@@ -79,14 +79,14 @@ public class ShipmentResource {
         sender.addressLine="5, CLoud Native Street";
         sender.city ="London";
         sender.country="UK";
-        sender.name="The Sender"; 
+        sender.name="The Sender";
         sender.persist();
 
         Company receiver = new Company();
         receiver.addressLine="10, Microservices Avenue";
         receiver.city ="Halifax";
         receiver.country="USA";
-        receiver.name="The Receiver"; 
+        receiver.name="The Receiver";
         receiver.persist();
 
         Ship ship = new Ship();
@@ -94,7 +94,7 @@ public class ShipmentResource {
         ship.vesselType=ShipType.CONTAINER_VESSEL;
         ship.persist();
 
-        
+
     }
     @GET
     @Path("/init")
@@ -105,7 +105,7 @@ public class ShipmentResource {
         shipment.startPort = Port.find("name","London").firstResult();
         shipment.endPort = Port.find("name","Halifax").firstResult();
         shipment.persist();
-        
+
     }
 
     //public getConsolidatedShipemnts
