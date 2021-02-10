@@ -11,10 +11,16 @@ import com.redhat.model.Port;
 import com.redhat.model.Ship;
 import com.redhat.model.ShipType;
 import com.redhat.model.Shipment;
+import com.redhat.service.ShipmentService;
+
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 
 @Path("/shipments")
 public class ShipmentResource {
+
+    @RestClient
+    ShipmentService shipmentService;
 
     @GET
     public List<Shipment> allShipments() {
@@ -36,6 +42,38 @@ public class ShipmentResource {
         halifax.longitude=63.567;
         halifax.name="Halifax";
         halifax.persist();
+
+        Port newyork = new Port();
+        newyork.latitude=40.61555785493085;
+        newyork.longitude=-74.17908961253214;
+        newyork.name="New York";
+        newyork.persist();
+
+        Port norfolk = new Port();
+        norfolk.latitude=36.92981451764536;
+        norfolk.longitude=-76.32490750852378;
+        norfolk.name="Norfolk";
+        norfolk.persist();
+
+        Port tangier = new Port();
+        tangier.latitude=35.766667;
+        tangier.longitude=-5.8;
+        tangier.name="Tangier";
+        tangier.persist();
+
+        Port lisbon = new Port();
+        lisbon.latitude=38.725267;
+        lisbon.longitude=-9.150019;
+        lisbon.name="Lisbon";
+        lisbon.persist();
+
+        Port colonCity = new Port();
+        colonCity.latitude=9.359;
+        colonCity.longitude=-79.901;
+        colonCity.name="Colon City";
+        colonCity.persist();
+
+        
 
         Company sender = new Company();
         sender.addressLine="5, CLoud Native Street";
@@ -69,4 +107,6 @@ public class ShipmentResource {
         shipment.persist();
         
     }
+
+    //public getConsolidatedShipemnts
 }
