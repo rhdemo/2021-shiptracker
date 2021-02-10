@@ -10,6 +10,7 @@ import { fetchShipping } from '../services/shippingService';
 import { ShippingType } from './types';
 
 import './App.scss';
+import { POLL_MS } from '../utilities/const';
 
 const POSITION_CHANGE_VALUE = 5;
 const ATLANTIC_LOCATION = { latitude: 30, longitude: -38 };
@@ -23,18 +24,24 @@ const App: React.FC = () => {
     ATLANTIC_LOCATION,
   );
   const [zoom, setZoom] = React.useState<number>(2.59);
-  const [shipping, setShipping] = React.useState<ShippingType[]>();
+  const [shipping, setShipping] = React.useState<ShippingType[]>([]);
   const focusRef = React.useRef<HTMLInputElement | null>(null);
 
   React.useEffect(() => {
     let handle;
     const watchShipping = () => {
-      fetchShipping().then((response) => {
-        if (!_.isEqual(response, shipping)) {
-          setShipping(response);
-        }
-      });
-      setTimeout(() => watchShipping(), 5000);
+      fetchShipping()
+        .then((updatedShipping: ShippingType[]) => {
+          setShipping((prevShipping): ShippingType[] => {
+            if (!_.isEqual(updatedShipping, prevShipping)) {
+              return updatedShipping;
+            }
+            return prevShipping;
+          });
+        })
+        .finally(() => {
+          setTimeout(() => watchShipping(), POLL_MS);
+        });
     };
     watchShipping();
 

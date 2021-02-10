@@ -146,6 +146,7 @@ const setupDotenvFilesForEnv = ({ env }) => {
   const DEV_MODE = process.env.CSD_DEV_MODE || undefined;
   const OUTPUT_ONLY = process.env._CSD_OUTPUT_ONLY === 'true';
   const GOOGLE_API_KEY= process.env.CSD_GOOGLE_API_KEY || undefined;
+  const POLL_MS= process.env.CSD_POLL_MS || '500';
 
   process.env._CSD_RELATIVE_DIRNAME = RELATIVE_DIRNAME;
   process.env._CSD_IS_PROJECT_ROOT_DIR = IS_ROOT;
@@ -158,6 +159,7 @@ const setupDotenvFilesForEnv = ({ env }) => {
   process.env._CSD_OUTPUT_ONLY = OUTPUT_ONLY;
   process.env._CSD_DEV_MODE = DEV_MODE;
   process.env._CSD_GOOGLE_API_KEY = GOOGLE_API_KEY;
+  process.env._CSD_POLL_MS = POLL_MS;
 };
 
 module.exports = { setupWebpackDotenvFilesForEnv, setupDotenvFilesForEnv };
