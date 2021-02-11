@@ -8,11 +8,12 @@ import Sun from '../images/sun.svg';
 import ShadowClip from './ShadowClip';
 import { fetchShipping } from '../services/shippingService';
 import { ShippingType } from './types';
-
-import './App.scss';
 import { POLL_MS } from '../utilities/const';
 
-const POSITION_CHANGE_VALUE = 5;
+import './App.scss';
+
+const ZOOM_CHANGE_VALUE = 0.01;
+let POSITION_CHANGE_VALUE = 5;
 const ATLANTIC_LOCATION = { latitude: 30, longitude: -38 };
 const PACIFIC_LOCATION = { latitude: 30, longitude: -177 };
 
@@ -26,6 +27,21 @@ const App: React.FC = () => {
   const [zoom, setZoom] = React.useState<number>(2.59);
   const [shipping, setShipping] = React.useState<ShippingType[]>([]);
   const focusRef = React.useRef<HTMLInputElement | null>(null);
+  const countdownInProgress = React.useRef<boolean>(false);
+  const shiftCount = React.useRef<number>(0);
+  const modMode = React.useRef<boolean>(false);
+
+  const startCountdown = React.useCallback(() => {
+    countdownInProgress.current = true;
+    shiftCount.current = 1;
+    setTimeout(() => {
+      countdownInProgress.current = false;
+      if (shiftCount.current >= 3) {
+        modMode.current = !modMode.current;
+        console.warn(`Navigation Dev Mode: ${modMode.current}`);
+      }
+    }, 1000);
+  }, []);
 
   React.useEffect(() => {
     let handle;
@@ -89,19 +105,17 @@ const App: React.FC = () => {
   }, [location, endLocation]);
 
   const handleKeyPress = (e) => {
-    if (e.key === '+') {
-      setZoom(zoom + 0.01);
-    }
-    if (e.key === '-') {
-      setZoom(zoom - 0.01);
-    }
     if (e.key === 'ArrowLeft') {
-      // setEndLocation(PACIFIC_LOCATION);
-      setEndLocation({ latitude: location.latitude, longitude: location.longitude - 10 });
+      setEndLocation({
+        latitude: location.latitude,
+        longitude: location.longitude - POSITION_CHANGE_VALUE * 2,
+      });
     }
     if (e.key === 'ArrowRight') {
-      // setEndLocation(ATLANTIC_LOCATION);
-      setEndLocation({ latitude: location.latitude, longitude: location.longitude + 10 });
+      setEndLocation({
+        latitude: location.latitude,
+        longitude: location.longitude + POSITION_CHANGE_VALUE * 2,
+      });
     }
     if (e.key === 'Enter' || e.key === ' ') {
       setEndLocation(
@@ -111,6 +125,44 @@ const App: React.FC = () => {
           : PACIFIC_LOCATION,
       );
     }
+
+    if (e.key === 'Shift') {
+      if (!countdownInProgress.current) {
+        startCountdown();
+        return;
+      }
+      shiftCount.current++;
+      return;
+    }
+    if (!modMode.current) {
+      return;
+    }
+
+    if (e.key === '+') {
+      setZoom(zoom + ZOOM_CHANGE_VALUE);
+    }
+    if (e.key === '-') {
+      setZoom(zoom - ZOOM_CHANGE_VALUE);
+    }
+    if (e.key === 'ArrowUp') {
+      setEndLocation({
+        latitude: location.latitude + POSITION_CHANGE_VALUE * 2,
+        longitude: location.longitude,
+      });
+    }
+    if (e.key === 'ArrowDown') {
+      setEndLocation({
+        latitude: location.latitude - POSITION_CHANGE_VALUE * 2,
+        longitude: location.longitude,
+      });
+    }
+    if (e.key === '*') {
+      POSITION_CHANGE_VALUE = Math.min(POSITION_CHANGE_VALUE + 0.2, 10);
+    }
+    if (e.key === '/') {
+      POSITION_CHANGE_VALUE = Math.max(POSITION_CHANGE_VALUE - 0.2, 0);
+    }
+    console.log(`======= POSITION_CHANGE_VALUE: ${POSITION_CHANGE_VALUE}`);
   };
 
   const onMapFocus = () => {

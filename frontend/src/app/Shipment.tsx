@@ -92,9 +92,11 @@ const Shipment: React.FC<ShipmentProps> = ({ shipment }) => {
     <>
       <MapPort port={shipment.startPort} />
       <MapPort port={shipment.endPort} />
-      {originLine ? <Polyline path={originLine.points} options={originLine.options} /> : null}
+      {originLine ? (
+        <Polyline path={originLine.points.slice(1)} options={originLine.options} />
+      ) : null}
       {destinationLine ? (
-        <Polyline path={destinationLine.points} options={destinationLine.options} />
+        <Polyline path={destinationLine.points.slice(1, -1)} options={destinationLine.options} />
       ) : null}
       <Ship shipment={shipment} location={shipLocation} />
     </>

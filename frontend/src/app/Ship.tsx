@@ -59,29 +59,16 @@ const Ship: React.FC<ShipProps> = ({ shipment, location }) => {
     >
       {marker && isOpen ? (
         <InfoWindow anchor={marker} options={infoWindowOptions}>
-          <div className="csd-shipping__port-marker" onClick={() => setIsOpen(false)}>
-            <div className="csd-shipping__port-marker__header">
-              <span className="csd-shipping__port-marker__header__name">{shipment.ship.name}</span>
+          <div className="csd-shipping__ship-info" onClick={() => setIsOpen(false)}>
+            <div>
+              <span className="csd-shipping__ship-info__category">Origin:</span>
+              {shipment.startPort.name}
             </div>
-            <div className="csd-shipping__port-marker__body">
-              <div className="csd-shipping__port-marker__row">
-                <span className="csd-shipping__port-marker__row__category">Origin:</span>
-                <span className="csd-shipping__port-marker__row__value">
-                  {shipment.startPort.name}
-                </span>
-              </div>
-              <div className="csd-shipping__port-marker__row">
-                <span className="csd-shipping__port-marker__row__category">Destination:</span>
-                <span className="csd-shipping__port-marker__row__value">
-                  {shipment.endPort.name}
-                </span>
-              </div>
-              <div className="csd-shipping__port-marker__row">
-                <span className="csd-shipping__port-marker__row__value">
-                  {shipment.ship.travelTime}
-                </span>
-              </div>
+            <div>
+              <span className="csd-shipping__ship-info__category">Destination:</span>
+              {shipment.endPort.name}
             </div>
+            <div>{shipment.ship.travelTime}</div>
           </div>
         </InfoWindow>
       ) : null}

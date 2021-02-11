@@ -101,29 +101,15 @@ body {
     }
 
     .gm-ui-hover-effect {
+      display: none !important;
     }
   }
 
-  &__port-marker {
+  &__ship-info {
     padding: 8px;
     font-size: 12px;
-
-    &__header {
-      &__name {
-        font-weight: bold;
-      }
-    }
-
-    &__body {
-    }
-
-    &__row {
-      &__category {
-        margin-right: 4px;
-      }
-
-      &__value {
-      }
+    &__category {
+      margin-right: 4px;
     }
   }
 }

@@ -10,14 +10,16 @@ const Dotenv = require('dotenv-webpack');
  * @param {string} directory
  * @returns {boolean}
  */
-const getProjectIsRootDir = directory => {
+const getProjectIsRootDir = (directory) => {
   const dotenvLocalFile = path.resolve(directory, '.env.local');
   const dotenvFile = path.resolve(directory, '.env');
   let localIsRoot;
   let isRoot;
 
   if (fs.existsSync(dotenvLocalFile)) {
-    const { CSD_IS_PROJECT_ROOT_DIR: DOTENV_LOCAL_ROOT } = dotenv.parse(fs.readFileSync(dotenvLocalFile));
+    const { CSD_IS_PROJECT_ROOT_DIR: DOTENV_LOCAL_ROOT } = dotenv.parse(
+      fs.readFileSync(dotenvLocalFile),
+    );
     localIsRoot = DOTENV_LOCAL_ROOT;
   }
 
@@ -35,7 +37,7 @@ const getProjectIsRootDir = directory => {
  * @param {string} directory
  * @returns {object}
  */
-const getTsCompilerOptions = directory => {
+const getTsCompilerOptions = (directory) => {
   const tsconfigFile = path.resolve(directory, './tsconfig.json');
   let tsCompilerOptions = {};
 
@@ -53,10 +55,10 @@ const getTsCompilerOptions = directory => {
  * @param {string} path
  * @returns {*}
  */
-const setupWebpackDotenvFile = path => {
+const setupWebpackDotenvFile = (path) => {
   const settings = {
     systemvars: true,
-    silent: true
+    silent: true,
   };
 
   if (path) {
@@ -78,7 +80,9 @@ const setupWebpackDotenvFilesForEnv = ({ directory, env, isRoot = true }) => {
   const dotenvWebpackSettings = [];
 
   if (env) {
-    dotenvWebpackSettings.push(setupWebpackDotenvFile(path.resolve(directory, `.env.${env}.local`)));
+    dotenvWebpackSettings.push(
+      setupWebpackDotenvFile(path.resolve(directory, `.env.${env}.local`)),
+    );
     dotenvWebpackSettings.push(setupWebpackDotenvFile(path.resolve(directory, `.env.${env}`)));
   }
 
@@ -87,8 +91,12 @@ const setupWebpackDotenvFilesForEnv = ({ directory, env, isRoot = true }) => {
 
   if (!isRoot) {
     if (env) {
-      dotenvWebpackSettings.push(setupWebpackDotenvFile(path.resolve(directory, '..', `.env.${env}.local`)));
-      dotenvWebpackSettings.push(setupWebpackDotenvFile(path.resolve(directory, '..', `.env.${env}`)));
+      dotenvWebpackSettings.push(
+        setupWebpackDotenvFile(path.resolve(directory, '..', `.env.${env}.local`)),
+      );
+      dotenvWebpackSettings.push(
+        setupWebpackDotenvFile(path.resolve(directory, '..', `.env.${env}`)),
+      );
     }
 
     dotenvWebpackSettings.push(setupWebpackDotenvFile(path.resolve(directory, '..', '.env.local')));
@@ -104,7 +112,7 @@ const setupWebpackDotenvFilesForEnv = ({ directory, env, isRoot = true }) => {
  * @param {string} path
  * @returns {*}
  */
-const setupDotenvFile = path => {
+const setupDotenvFile = (path) => {
   const dotenvInitial = dotenv.config({ path });
   dotenvExpand(dotenvInitial);
 };
@@ -145,8 +153,8 @@ const setupDotenvFilesForEnv = ({ env }) => {
   const PORT = process.env.CSD_PORT || '3000';
   const DEV_MODE = process.env.CSD_DEV_MODE || undefined;
   const OUTPUT_ONLY = process.env._CSD_OUTPUT_ONLY === 'true';
-  const GOOGLE_API_KEY= process.env.CSD_GOOGLE_API_KEY || undefined;
-  const POLL_MS= process.env.CSD_POLL_MS || '500';
+  const GOOGLE_API_KEY = process.env.CSD_GOOGLE_API_KEY || undefined;
+  const POLL_MS = process.env.CSD_POLL_MS || '500';
 
   process.env._CSD_RELATIVE_DIRNAME = RELATIVE_DIRNAME;
   process.env._CSD_IS_PROJECT_ROOT_DIR = IS_ROOT;
