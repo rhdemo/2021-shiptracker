@@ -9,13 +9,17 @@ import ShadowClip from './ShadowClip';
 import { fetchShipping } from '../services/shippingService';
 import { ShippingType } from './types';
 import { POLL_MS } from '../utilities/const';
+import {
+  ATLANTIC_LOCATION,
+  ATLANTIC_REGION,
+  getPortRegion,
+  PACIFIC_LOCATION, PACIFIC_REGION
+} from '../utilities/mapUtils';
 
 import './App.scss';
 
 const ZOOM_CHANGE_VALUE = 0.01;
 let POSITION_CHANGE_VALUE = 5;
-const ATLANTIC_LOCATION = { latitude: 30, longitude: -38 };
-const PACIFIC_LOCATION = { latitude: 30, longitude: -177 };
 
 const App: React.FC = () => {
   const [location, setLocation] = React.useState<{ latitude: number; longitude: number }>(
@@ -24,7 +28,10 @@ const App: React.FC = () => {
   const [endLocation, setEndLocation] = React.useState<{ latitude: number; longitude: number }>(
     ATLANTIC_LOCATION,
   );
+  const [region, setRegion] = React.useState<string>(ATLANTIC_REGION);
   const [zoom, setZoom] = React.useState<number>(2.59);
+  const [arcDistMultiplier, setArcDistMultiplier] = React.useState<number>(0.2);
+  const [geodesic, setGeodesic] = React.useState<boolean>(true);
   const [shipping, setShipping] = React.useState<ShippingType[]>([]);
   const focusRef = React.useRef<HTMLInputElement | null>(null);
   const countdownInProgress = React.useRef<boolean>(false);
@@ -35,12 +42,15 @@ const App: React.FC = () => {
     countdownInProgress.current = true;
     shiftCount.current = 1;
     setTimeout(() => {
+      shiftCount.current = 0;
       countdownInProgress.current = false;
-      if (shiftCount.current >= 3) {
-        modMode.current = !modMode.current;
-        console.warn(`Navigation Dev Mode: ${modMode.current}`);
-      }
     }, 1000);
+  }, []);
+
+  const halfDistance = React.useCallback(() => {
+    const startLatLng = new google.maps.LatLng(0, 0);
+    const endLatLng = new google.maps.LatLng(0, 180);
+    return google.maps.geometry.spherical.computeDistanceBetween(startLatLng, endLatLng) * 0.4;
   }, []);
 
   React.useEffect(() => {
@@ -48,6 +58,28 @@ const App: React.FC = () => {
     const watchShipping = () => {
       fetchShipping()
         .then((updatedShipping: ShippingType[]) => {
+          updatedShipping.forEach((shipment) => {
+            const startLatLng = new google.maps.LatLng(
+              shipment.startPort.latitude,
+              shipment.startPort.longitude,
+            );
+            const endLatLng = new google.maps.LatLng(
+              shipment.endPort.latitude,
+              shipment.endPort.longitude,
+            );
+            const distance = google.maps.geometry.spherical.computeDistanceBetween(
+              startLatLng,
+              endLatLng,
+            );
+            if (distance > halfDistance()) {
+              if (shipment.startPort.longitude < 0) {
+                shipment.startPort.longitude += 360;
+              }
+              if (shipment.endPort.longitude < 0) {
+                shipment.endPort.longitude += 360;
+              }
+            }
+          });
           setShipping((prevShipping): ShippingType[] => {
             if (!_.isEqual(updatedShipping, prevShipping)) {
               return updatedShipping;
@@ -118,12 +150,8 @@ const App: React.FC = () => {
       });
     }
     if (e.key === 'Enter' || e.key === ' ') {
-      setEndLocation(
-        location.latitude === PACIFIC_LOCATION.latitude &&
-          location.longitude === PACIFIC_LOCATION.longitude
-          ? ATLANTIC_LOCATION
-          : PACIFIC_LOCATION,
-      );
+      setEndLocation(region === ATLANTIC_REGION ? PACIFIC_LOCATION : ATLANTIC_LOCATION);
+      setRegion(region === ATLANTIC_REGION ? PACIFIC_REGION : ATLANTIC_REGION);
     }
 
     if (e.key === 'Shift') {
@@ -132,6 +160,10 @@ const App: React.FC = () => {
         return;
       }
       shiftCount.current++;
+      if (shiftCount.current === 3) {
+        modMode.current = !modMode.current;
+        console.warn(`Navigation Dev Mode: ${modMode.current}`);
+      }
       return;
     }
     if (!modMode.current) {
@@ -144,6 +176,7 @@ const App: React.FC = () => {
     if (e.key === '-') {
       setZoom(zoom - ZOOM_CHANGE_VALUE);
     }
+
     if (e.key === 'ArrowUp') {
       setEndLocation({
         latitude: location.latitude + POSITION_CHANGE_VALUE * 2,
@@ -156,13 +189,30 @@ const App: React.FC = () => {
         longitude: location.longitude,
       });
     }
+
     if (e.key === '*') {
       POSITION_CHANGE_VALUE = Math.min(POSITION_CHANGE_VALUE + 0.2, 10);
     }
     if (e.key === '/') {
       POSITION_CHANGE_VALUE = Math.max(POSITION_CHANGE_VALUE - 0.2, 0);
     }
-    console.log(`======= POSITION_CHANGE_VALUE: ${POSITION_CHANGE_VALUE}`);
+
+    if (e.key === '(') {
+      setArcDistMultiplier(arcDistMultiplier + 0.01);
+    }
+    if (e.key === ')') {
+      setArcDistMultiplier(arcDistMultiplier - 0.01);
+    }
+    if (e.key === '^') {
+      if (geodesic) {
+        setGeodesic(false);
+        return;
+      }
+      setArcDistMultiplier(arcDistMultiplier * -1);
+    }
+    if (e.key === 'v') {
+      setGeodesic(true);
+    }
   };
 
   const onMapFocus = () => {
@@ -192,7 +242,9 @@ const App: React.FC = () => {
           lat={location.latitude}
           lng={location.longitude}
           zoom={zoom}
-          shipments={shipping}
+          shipments={shipping.filter((s) => getPortRegion(s.startPort.name) === region)}
+          arcDistMultiplier={arcDistMultiplier}
+          geodesic={geodesic}
         />
       </div>
       <div className="csd-shipping__atmospheric-object csd-shipping__sun">

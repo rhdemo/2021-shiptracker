@@ -9,14 +9,29 @@ interface MapContainerProps {
   lat: number;
   lng: number;
   zoom: number;
+  arcDistMultiplier: number;
+  geodesic: boolean;
   shipments?: ShippingType[];
   onMapFocus: () => void;
 }
 
 const GoogleLibs: Libraries = ['geometry'];
 
-const Earth: React.FC<MapContainerProps> = ({ lat, lng, zoom, shipments, onMapFocus }) => {
+const Earth: React.FC<MapContainerProps> = ({
+  lat,
+  lng,
+  zoom,
+  shipments,
+  onMapFocus,
+  arcDistMultiplier,
+  geodesic,
+}) => {
   const [center, setCenter] = React.useState<{ lat: number; lng: number }>({ lat, lng });
+  const [map, setMap] = React.useState(null);
+
+  const onLoad = React.useCallback((gMap) => {
+    setMap(gMap);
+  }, []);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: googleMapsApiKey,
@@ -79,9 +94,23 @@ const Earth: React.FC<MapContainerProps> = ({ lat, lng, zoom, shipments, onMapFo
   return (
     <div className="csd-shipping__earth" onFocus={onMapFocus}>
       {isLoaded && (
-        <GoogleMap mapContainerStyle={mapStyles} zoom={zoom} center={center} options={mapOptions}>
+        <GoogleMap
+          mapContainerStyle={mapStyles}
+          zoom={zoom}
+          center={center}
+          options={mapOptions}
+          onLoad={onLoad}
+        >
           {shipments?.length
-            ? shipments.map((shipment) => <Shipment key={shipment.id} shipment={shipment} />)
+            ? shipments.map((shipment) => (
+                <Shipment
+                  key={shipment.id}
+                  shipment={shipment}
+                  map={map}
+                  arcDistMultiplier={arcDistMultiplier}
+                  geodesic={geodesic}
+                />
+              ))
             : null}
         </GoogleMap>
       )}

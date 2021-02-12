@@ -3,9 +3,9 @@ import { Polyline } from '@react-google-maps/api';
 import { ShippingType } from './types';
 import MapPort from './Port';
 import Ship from './Ship';
-import { getGeodesicPath } from '../utilities/mapUtils';
+import { getCurvedPath, getGeodesicPath } from '../utilities/mapUtils';
 
-const getOptions = (isOrigin, dashOffset = 0): google.maps.PolylineOptions => {
+const getOptions = (isOrigin, dashOffset = 0, geodesic = true): google.maps.PolylineOptions => {
   return {
     icons: [
       {
@@ -19,7 +19,7 @@ const getOptions = (isOrigin, dashOffset = 0): google.maps.PolylineOptions => {
         repeat: `${20}px`,
       },
     ],
-    geodesic: true,
+    geodesic,
     strokeOpacity: 0,
     clickable: false,
     draggable: false,
@@ -36,19 +36,28 @@ interface LineType {
 
 interface ShipmentProps {
   shipment: ShippingType;
+  map: google.maps.Map;
+  arcDistMultiplier: number;
+  geodesic: boolean;
 }
 
-const Shipment: React.FC<ShipmentProps> = ({ shipment }) => {
+const Shipment: React.FC<ShipmentProps> = ({ shipment, map, arcDistMultiplier, geodesic }) => {
   const [offset, setOffset] = React.useState<number>(0);
   const [originLine, setOriginLine] = React.useState<LineType>();
   const [destinationLine, setDestinationLine] = React.useState<LineType>();
   const [shipLocation, setShipLocation] = React.useState<google.maps.LatLng>();
-
   React.useEffect(() => {
-    const path = getGeodesicPath(
-      new google.maps.LatLng(shipment.startPort.latitude, shipment.startPort.longitude, true),
-      new google.maps.LatLng(shipment.endPort.latitude, shipment.endPort.longitude, true),
-    );
+    const path = geodesic
+      ? getGeodesicPath(
+          new google.maps.LatLng(shipment.startPort.latitude, shipment.startPort.longitude, true),
+          new google.maps.LatLng(shipment.endPort.latitude, shipment.endPort.longitude, true),
+        )
+      : getCurvedPath(
+          new google.maps.LatLng(shipment.startPort.latitude, shipment.startPort.longitude, true),
+          new google.maps.LatLng(shipment.endPort.latitude, shipment.endPort.longitude, true),
+          map,
+          arcDistMultiplier,
+        );
     const shipPoint = Math.ceil(path.length * (shipment.ship.percentTravelled / 100));
     const originPoints = path.slice(0, shipPoint);
     const destinationPoints = path.slice(shipPoint - 1);
@@ -61,7 +70,7 @@ const Shipment: React.FC<ShipmentProps> = ({ shipment }) => {
       points: destinationPoints,
       options: getOptions(false, 0),
     });
-  }, [shipment]);
+  }, [shipment, arcDistMultiplier, map, geodesic]);
 
   React.useEffect(() => {
     if (originLine) {
