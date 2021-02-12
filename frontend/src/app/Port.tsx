@@ -13,7 +13,7 @@ const Port: React.FC<MapPortProps> = ({ port }) => {
     const icon: ReadonlyIcon = {
       url: getPortImage(port.name),
       origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(28, 42),
+      anchor: new google.maps.Point(29.33, 44),
       scaledSize: new google.maps.Size(60, 60),
     };
     newMarker.setIcon(icon);
