@@ -8,7 +8,7 @@ public class ShipmentDTO {
 
     public String startPortName;
 
-    public Long endPortID;
+    public Long endPortId;
 
     public String endPortName;
 

@@ -1,5 +1,6 @@
 package com.redhat.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -11,6 +12,8 @@ import com.redhat.model.Port;
 import com.redhat.model.Ship;
 import com.redhat.model.ShipType;
 import com.redhat.model.Shipment;
+import com.redhat.service.PortService;
+import com.redhat.service.ShipService;
 import com.redhat.service.ShipmentService;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -22,7 +25,14 @@ public class ShipmentResource {
     @RestClient
     ShipmentService shipmentService;
 
+    @RestClient
+    PortService portService;
+
+    @RestClient
+    ShipService shipService;
+
     @GET
+    @Path("/local")
     public List<Shipment> allShipments() {
         return Shipment.listAll();
     }
@@ -108,5 +118,19 @@ public class ShipmentResource {
 
     }
 
-    //public getConsolidatedShipemnts
+    @GET
+    public List<Shipment> getConsolidatedShipemnts(){
+        List<Shipment> shipments = new ArrayList<Shipment>();
+        shipmentService.getShipments().forEach(shipment -> {
+            Shipment consolidatedShipment = new Shipment();
+            consolidatedShipment.id = shipment.id;
+            consolidatedShipment.startPort = portService.getPort(shipment.startPortId);
+            consolidatedShipment.endPort = portService.getPort(shipment.endPortId);
+            consolidatedShipment.ship = shipService.getShip(shipment.shipId);
+            consolidatedShipment.completionRate = 50;
+            consolidatedShipment.completionState = "14 Days 2 hours";
+            shipments.add(consolidatedShipment);
+        });
+        return shipments;
+    }
 }

@@ -23,4 +23,12 @@ public class Shipment extends PanacheEntity{
     @OneToMany
     public List<Container> containers;
 
+    public double latitude;
+
+    public double longitude;
+
+    public int completionRate;
+
+    public String completionState;
+
 }
