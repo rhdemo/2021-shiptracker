@@ -14,5 +14,8 @@ public class Ship extends PanacheEntity {
     @Enumerated(EnumType.STRING)
     public ShipType vesselType;
 
+    
+    public int percentTravelled;
 
+    public String travelTime;
 }
