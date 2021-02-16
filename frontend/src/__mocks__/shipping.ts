@@ -6,8 +6,6 @@ const MockShipping: ShippingType[] = [
     ship: {
       id: 1,
       name: 'MAERSK',
-      percentTravelled: 25,
-      travelTime: '14 days 3 hours',
     },
     containers: [],
     startPort: {
@@ -22,14 +20,14 @@ const MockShipping: ShippingType[] = [
       longitude: -63.567,
       name: 'Halifax',
     },
+    percentTravelled: 25,
+    travelTime: '14 days 3 hours',
   },
   {
     id: 2,
     ship: {
       id: 2,
       name: 'Hapag-Lloyd',
-      percentTravelled: 65,
-      travelTime: '16 days 14 hours',
     },
     containers: [],
     startPort: {
@@ -44,14 +42,14 @@ const MockShipping: ShippingType[] = [
       longitude: -5.8,
       name: 'Tangier',
     },
+    percentTravelled: 65,
+    travelTime: '16 days 14 hours',
   },
   {
     id: 3,
     ship: {
       id: 1,
       name: 'MAERSK',
-      percentTravelled: 25,
-      travelTime: '14 days 3 hours',
     },
     containers: [],
     startPort: {
@@ -66,14 +64,14 @@ const MockShipping: ShippingType[] = [
       longitude: -9.150019,
       name: 'Lisbon',
     },
+    percentTravelled: 25,
+    travelTime: '14 days 3 hours',
   },
   {
     id: 4,
     ship: {
       id: 2,
       name: 'Hapag-Lloyd',
-      percentTravelled: 65,
-      travelTime: '16 days 14 hours',
     },
     containers: [],
     startPort: {
@@ -88,14 +86,14 @@ const MockShipping: ShippingType[] = [
       longitude: -76.32490750852378,
       name: 'Norfolk',
     },
+    percentTravelled: 65,
+    travelTime: '16 days 14 hours',
   },
   {
     id: 5,
     ship: {
       id: 1,
       name: 'MAERSK',
-      percentTravelled: 25,
-      travelTime: '14 days 3 hours',
     },
     containers: [],
     startPort: {
@@ -110,14 +108,14 @@ const MockShipping: ShippingType[] = [
       longitude: 139.75255503193452,
       name: 'Tokyo',
     },
+    percentTravelled: 25,
+    travelTime: '14 days 3 hours',
   },
   {
     id: 6,
     ship: {
       id: 2,
       name: 'Hapag-Lloyd',
-      percentTravelled: 65,
-      travelTime: '16 days 14 hours',
     },
     containers: [],
     startPort: {
@@ -132,14 +130,14 @@ const MockShipping: ShippingType[] = [
       longitude: 121.39034580394188,
       name: 'Taipei',
     },
+    percentTravelled: 65,
+    travelTime: '16 days 14 hours',
   },
   {
     id: 7,
     ship: {
       id: 2,
       name: 'Hapag-Lloyd',
-      percentTravelled: 50,
-      travelTime: '16 days 14 hours',
     },
     containers: [],
     startPort: {
@@ -154,6 +152,8 @@ const MockShipping: ShippingType[] = [
       longitude: -99.82177984012193,
       name: 'Acapulco',
     },
+    percentTravelled: 50,
+    travelTime: '16 days 14 hours',
   },
 ];
 

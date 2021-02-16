@@ -18,8 +18,6 @@ type RouteType = {
 type ShipType = {
   id: number;
   name: string;
-  percentTravelled: number;
-  travelTime: string;
 };
 
 type ShippingType = {
@@ -28,6 +26,8 @@ type ShippingType = {
   containers: [];
   startPort: PortType;
   endPort: PortType;
+  percentTravelled: number;
+  travelTime: string;
 };
 
 export { PortType, RouteType, ShipType, ShippingType };

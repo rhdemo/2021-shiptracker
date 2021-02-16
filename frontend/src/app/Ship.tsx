@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Marker, InfoWindow } from '@react-google-maps/api';
 import ShipImageEast from '../images/ship-east.svg';
 import ShipImageWest from '../images/ship-west.svg';
@@ -68,7 +68,7 @@ const Ship: React.FC<ShipProps> = ({ shipment, location }) => {
               <span className="csd-shipping__ship-info__category">Destination:</span>
               {shipment.endPort.name}
             </div>
-            <div>{shipment.ship.travelTime}</div>
+            <div>{shipment.travelTime}</div>
           </div>
         </InfoWindow>
       ) : null}

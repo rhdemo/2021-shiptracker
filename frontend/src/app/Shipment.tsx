@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Polyline } from '@react-google-maps/api';
 import { ShippingType } from './types';
 import MapPort from './Port';
@@ -46,21 +46,56 @@ const Shipment: React.FC<ShipmentProps> = ({ shipment, map, arcDistMultiplier, g
   const [originLine, setOriginLine] = React.useState<LineType>();
   const [destinationLine, setDestinationLine] = React.useState<LineType>();
   const [shipLocation, setShipLocation] = React.useState<google.maps.LatLng>();
+  const maxDistance = React.useRef<number>();
+
   React.useEffect(() => {
-    const path = geodesic
-      ? getGeodesicPath(
-          new google.maps.LatLng(shipment.startPort.latitude, shipment.startPort.longitude, true),
-          new google.maps.LatLng(shipment.endPort.latitude, shipment.endPort.longitude, true),
-        )
-      : getCurvedPath(
-          new google.maps.LatLng(shipment.startPort.latitude, shipment.startPort.longitude, true),
-          new google.maps.LatLng(shipment.endPort.latitude, shipment.endPort.longitude, true),
-          map,
-          arcDistMultiplier,
+    if (!maxDistance.current) {
+      maxDistance.current =
+        google.maps.geometry.spherical.computeDistanceBetween(
+          new google.maps.LatLng(0, 0),
+          new google.maps.LatLng(0, 180),
+        ) * 0.4;
+    }
+    let startPortLatLng = new google.maps.LatLng(
+      shipment.startPort.latitude,
+      shipment.startPort.longitude,
+      true,
+    );
+    let endPortLatLng = new google.maps.LatLng(
+      shipment.endPort.latitude,
+      shipment.endPort.longitude,
+      true,
+    );
+    const distance = google.maps.geometry.spherical.computeDistanceBetween(
+      startPortLatLng,
+      endPortLatLng,
+    );
+
+    if (distance > maxDistance.current) {
+      if (startPortLatLng.lng() < 0) {
+        startPortLatLng = new google.maps.LatLng(
+          startPortLatLng.lat(),
+          startPortLatLng.lng() + 360,
+          true,
         );
-    const shipPoint = Math.ceil(path.length * (shipment.ship.percentTravelled / 100));
+      }
+      if (endPortLatLng.lng() < 0) {
+        endPortLatLng = new google.maps.LatLng(
+          endPortLatLng.lat(),
+          endPortLatLng.lng() + 360,
+          true,
+        );
+      }
+    }
+
+    const path = geodesic
+      ? getGeodesicPath(startPortLatLng, endPortLatLng)
+      : getCurvedPath(startPortLatLng, endPortLatLng, map, arcDistMultiplier);
+
+    const shipPoint = Math.ceil(path.length * (shipment.percentTravelled / 100));
     const originPoints = path.slice(0, shipPoint);
     const destinationPoints = path.slice(shipPoint - 1);
+
     setShipLocation(path[shipPoint]);
     setOriginLine({
       points: originPoints,

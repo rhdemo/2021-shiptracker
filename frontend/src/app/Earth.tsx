@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { ShippingType } from './types';

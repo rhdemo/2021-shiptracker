@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import * as _ from 'lodash';
 import '@patternfly/react-core/dist/styles/base.css';
 import Earth from './Earth';
@@ -13,7 +13,8 @@ import {
   ATLANTIC_LOCATION,
   ATLANTIC_REGION,
   getPortRegion,
-  PACIFIC_LOCATION, PACIFIC_REGION
+  PACIFIC_LOCATION,
+  PACIFIC_REGION,
 } from '../utilities/mapUtils';
 
 import './App.scss';
@@ -47,39 +48,11 @@ const App: React.FC = () => {
     }, 1000);
   }, []);
 
-  const halfDistance = React.useCallback(() => {
-    const startLatLng = new google.maps.LatLng(0, 0);
-    const endLatLng = new google.maps.LatLng(0, 180);
-    return google.maps.geometry.spherical.computeDistanceBetween(startLatLng, endLatLng) * 0.4;
-  }, []);
-
   React.useEffect(() => {
     let handle;
     const watchShipping = () => {
       fetchShipping()
         .then((updatedShipping: ShippingType[]) => {
-          updatedShipping.forEach((shipment) => {
-            const startLatLng = new google.maps.LatLng(
-              shipment.startPort.latitude,
-              shipment.startPort.longitude,
-            );
-            const endLatLng = new google.maps.LatLng(
-              shipment.endPort.latitude,
-              shipment.endPort.longitude,
-            );
-            const distance = google.maps.geometry.spherical.computeDistanceBetween(
-              startLatLng,
-              endLatLng,
-            );
-            if (distance > halfDistance()) {
-              if (shipment.startPort.longitude < 0) {
-                shipment.startPort.longitude += 360;
-              }
-              if (shipment.endPort.longitude < 0) {
-                shipment.endPort.longitude += 360;
-              }
-            }
-          });
           setShipping((prevShipping): ShippingType[] => {
             if (!_.isEqual(updatedShipping, prevShipping)) {
               return updatedShipping;

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Marker } from '@react-google-maps/api';
 import { PortType } from './types';
 import { getPortImage } from '../utilities/mapUtils';
