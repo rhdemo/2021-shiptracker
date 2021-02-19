@@ -1,6 +1,6 @@
-== Postgresql 
+## Postgresql 
 
-=== Locally in dev mode with docker 
+### Local in dev mode with docker 
 
 ```
 docker run --ulimit memlock=-1:-1 -it --rm=true --memory-swappiness=0 \
@@ -9,9 +9,9 @@ docker run --ulimit memlock=-1:-1 -it --rm=true --memory-swappiness=0 \
     -p 5432:5432 postgres:10.5
 
 ```
-=== Deployed as JAR
+### Deployed as JAR
 
-Quarkus will try to connect to a database name 'ship' running on : `jdbc:postgresql://postgresql/ship`
+Quarkus will try to connect to a database named 'ship' running on : `jdbc:postgresql://postgresql/ship`
 
 This can be overidden with a ENV VAR with the key : `QUARKUS_DATASOURCE_JDBC_URL`
 
