@@ -15,7 +15,5 @@ public class Ship extends PanacheEntity {
     public ShipType vesselType;
 
     
-    public int percentTravelled;
-
-    public String travelTime;
+    
 }

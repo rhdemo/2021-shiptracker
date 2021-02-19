@@ -27,8 +27,8 @@ public class Shipment extends PanacheEntity{
 
     public double longitude;
 
-    public int completionRate;
+    public int percentTravelled;
 
-    public String completionState;
+    public String travelTime;
 
 }

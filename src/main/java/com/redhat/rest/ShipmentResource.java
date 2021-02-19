@@ -127,8 +127,8 @@ public class ShipmentResource {
             consolidatedShipment.startPort = portService.getPort(shipment.startPortId);
             consolidatedShipment.endPort = portService.getPort(shipment.endPortId);
             consolidatedShipment.ship = shipService.getShip(shipment.shipId);
-            consolidatedShipment.ship.percentTravelled = 50;
-            consolidatedShipment.ship.travelTime = "14 Days 2 hours";
+            consolidatedShipment.percentTravelled = 50;
+            consolidatedShipment.travelTime = "14 Days 2 hours";
             shipments.add(consolidatedShipment);
         });
         return shipments;
