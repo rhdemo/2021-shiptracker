@@ -12,7 +12,6 @@ import { POLL_MS } from '../utilities/const';
 import {
   ATLANTIC_LOCATION,
   ATLANTIC_REGION,
-  getPortRegion,
   PACIFIC_LOCATION,
   PACIFIC_REGION,
 } from '../utilities/mapUtils';
@@ -215,7 +214,7 @@ const App: React.FC = () => {
           lat={location.latitude}
           lng={location.longitude}
           zoom={zoom}
-          shipments={shipping.filter((s) => getPortRegion(s.startPort.name) === region)}
+          shipments={shipping}
           arcDistMultiplier={arcDistMultiplier}
           geodesic={geodesic}
         />

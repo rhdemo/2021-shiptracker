@@ -135,7 +135,7 @@ const Shipment: React.FC<ShipmentProps> = ({ shipment, map, arcDistMultiplier, g
   return (
     <>
       <MapPort port={shipment.startPort} />
-      <MapPort port={shipment.endPort} />
+      <MapPort port={shipment.endPort} isDestination />
       {originLine ? (
         <Polyline path={originLine.points.slice(1)} options={originLine.options} />
       ) : null}
