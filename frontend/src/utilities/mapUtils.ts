@@ -12,6 +12,12 @@ import SanLorenzo from '../images/sanlorenzo-port.svg';
 import Tokyo from '../images/tokyo-port.svg';
 import Taipei from '../images/TAIPEI-port.svg';
 import Shangai from '../images/shangai-port.svg';
+import LosAngeles from '../images/los-angeles-port.svg';
+import Capetown from '../images/capetown-port.svg';
+import Nagoya from '../images/nagoya-port.svg';
+import Seattle from '../images/seattle-port.svg';
+import Rotterdam from '../images/rotterdam-port.svg';
+import Sydney from '../images/sydney-port.svg';
 
 export const ATLANTIC_REGION = 'Atlantic';
 export const PACIFIC_REGION = 'Pacific';
@@ -19,6 +25,11 @@ export const ATLANTIC_LOCATION = { latitude: 30, longitude: -38 };
 export const PACIFIC_LOCATION = { latitude: 30, longitude: -162 };
 
 const ARC_DIST_MULTIPLIER = 0.2;
+
+export type Point = {
+  x: number;
+  y: number;
+};
 
 export const getPortImage = (portName: string): string => {
   switch (portName) {
@@ -51,6 +62,18 @@ export const getPortImage = (portName: string): string => {
       return Taipei;
     case 'Shangai':
       return Shangai;
+    case 'Capetown':
+      return Capetown;
+    case 'Nagoya':
+      return Nagoya;
+    case 'Seattle':
+      return Seattle;
+    case 'Los Angeles':
+      return LosAngeles;
+    case 'Rotterdam':
+      return Rotterdam;
+    case 'Sydney':
+      return Sydney;
     default:
       return '';
   }
@@ -81,9 +104,14 @@ export const getPortRegion = (portName: string): string => {
 };
 
 export const directionEast = (startLong: number, endLong: number): boolean => {
-  const originLng = startLong + 180;
-  const destinationLng = endLong + 180;
-  return destinationLng > originLng && Math.abs(destinationLng - originLng) <= 180;
+  if ((startLong < 0 && endLong < 0) || (startLong > 0 && endLong > 0)) {
+    return startLong < endLong;
+  }
+  if (startLong < 0) {
+    return 180 + startLong + endLong < 180;
+  }
+
+  return 180 + endLong + startLong > 180;
 };
 
 export const directionSouth = (startLat: number, endLat: number): boolean => {
@@ -103,22 +131,34 @@ const B4 = function (t) {
   return (1 - t) * (1 - t) * (1 - t);
 };
 
-const getBezierPoint = (C1, C2, C3, C4, percent) => {
+const getBezierPoint = (C1: Point, C2: Point, C3: Point, C4: Point, percent: number): Point => {
   return {
     x: C1.x * B1(percent) + C2.x * B2(percent) + C3.x * B3(percent) + C4.x * B4(percent),
     y: C1.y * B1(percent) + C2.y * B2(percent) + C3.y * B3(percent) + C4.y * B4(percent),
   };
 };
 
-const convertToPoint = (position: google.maps.LatLng, map: google.maps.Map) => {
+const getScaleValues = (
+  map: google.maps.Map,
+): { scale: number; topRight: Point | null; bottomLeft: Point | null } => {
   const projection = map?.getProjection();
   const bounds = map?.getBounds();
   if (!projection || !bounds) {
-    return null;
+    return { scale: -1, topRight: null, bottomLeft: null };
   }
   const topRight = projection.fromLatLngToPoint(bounds.getNorthEast());
   const bottomLeft = projection.fromLatLngToPoint(bounds.getSouthWest());
   const scale = Math.pow(2, map.getZoom());
+
+  return { scale, topRight, bottomLeft };
+};
+
+const convertToPoint = (position: google.maps.LatLng, map: google.maps.Map) => {
+  const projection = map?.getProjection();
+  const { scale, topRight, bottomLeft } = getScaleValues(map);
+  if (!projection || !topRight || !bottomLeft) {
+    return null;
+  }
   const worldPoint = projection.fromLatLngToPoint(position);
 
   return {
@@ -127,21 +167,17 @@ const convertToPoint = (position: google.maps.LatLng, map: google.maps.Map) => {
   };
 };
 
-const convertToLatLng = (point, map) => {
-  const projection = map?.getProjection();
-  const bounds = map?.getBounds();
-  if (!projection || !bounds) {
+const convertToLatLng = (point: Point, map: google.maps.Map) => {
+  const { scale, topRight, bottomLeft } = getScaleValues(map);
+  if (!topRight || !bottomLeft) {
     return null;
   }
-  const topRight = projection.fromLatLngToPoint(bounds.getNorthEast());
-  const bottomLeft = projection.fromLatLngToPoint(bounds.getSouthWest());
-  const scale = Math.pow(2, map.getZoom());
 
   const worldPoint = new google.maps.Point(
     point.x / scale + bottomLeft.x,
     point.y / scale + topRight.y,
   );
-  return map.getProjection().fromPointToLatLng(worldPoint);
+  return map?.getProjection()?.fromPointToLatLng(worldPoint);
 };
 
 const getCurvedPath = (
@@ -165,7 +201,7 @@ const getCurvedPath = (
 
   const angle = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
 
-  const points = [];
+  const points: Point[] = [];
 
   let t;
   const arcPoint = {
@@ -179,7 +215,13 @@ const getCurvedPath = (
   points.push(startPoint);
   points.reverse();
 
-  return points.map((point) => convertToLatLng(point, map));
+  return points.reduce((acc, point) => {
+    const latLng = convertToLatLng(point, map);
+    if (latLng) {
+      acc.push(latLng);
+    }
+    return acc;
+  }, [] as google.maps.LatLng[]);
 };
 
 const getGeodesicPath = (
