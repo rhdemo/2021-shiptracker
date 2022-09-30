@@ -62,7 +62,7 @@ export const getPortImage = (portName: string): string => {
       return Taipei;
     case 'Shangai':
       return Shangai;
-    case 'Capetown':
+    case 'Cape Town':
       return Capetown;
     case 'Nagoya':
       return Nagoya;
