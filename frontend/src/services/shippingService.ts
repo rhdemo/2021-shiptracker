@@ -5,7 +5,9 @@ import { DEV_MODE } from '../utilities/const';
 import { MockShipping } from '../__mocks__/shipping';
 
 export const fetchShipping = (): Promise<ShippingType[]> => {
-  const getUrl = getBackendURL('/shipments');
+  // Burr
+  // const getUrl = getBackendURL('/shipments');
+  const getUrl = getBackendURL('/shipments/mockshipments');
   if (DEV_MODE) {
     return new Promise<ShippingType[]>((resolve) => {
       setTimeout(() => {
